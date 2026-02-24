@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 
 export default function BackNav() {
@@ -10,6 +10,11 @@ export default function BackNav() {
   const progressRef = useRef(0);
   const rafRef = useRef<number | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const linkRef = useRef<HTMLAnchorElement>(null);
+
+  useEffect(() => {
+    if (linkRef.current?.matches(':hover')) onEnter();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const animateTo = (target: number) => {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
@@ -43,6 +48,7 @@ export default function BackNav() {
   return (
     <Link
       href="/"
+      ref={linkRef}
       className="absolute inset-y-0 left-0 w-2/5 z-10"
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
@@ -60,8 +66,9 @@ export default function BackNav() {
 
       {/* Back text — position and opacity both driven by t (0→1) */}
       <div
-        className="absolute inset-0 flex items-center justify-center pointer-events-none"
+        className="absolute inset-x-0 flex justify-center pointer-events-none"
         style={{
+          top: '25%',
           opacity: t,
           transform: `translateX(${(1 - t) * -28}px)`,
         }}
