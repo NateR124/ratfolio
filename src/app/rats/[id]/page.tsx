@@ -1,5 +1,4 @@
 import { rats } from '@/lib/rats';
-import AudioPlayer from '@/components/AudioPlayer';
 import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
@@ -10,43 +9,36 @@ export function generateStaticParams() {
   }));
 }
 
-export default function RatPage({ params }: { params: { id: string } }) {
-  const rat = rats.find((r) => r.id === params.id);
+export default async function RatPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const rat = rats.find((r) => r.id === id);
 
   if (!rat) {
     notFound();
   }
 
-  // Placeholder image for the rat detail
-  const ratImage = `https://placehold.co/600x800/1a1a1a/FFF.png?text=${encodeURIComponent(rat.name)}`;
-
   return (
-    <div className="min-h-screen bg-neutral-900 text-white flex flex-col items-center justify-center p-8">
-      <AudioPlayer src={rat.audioPath} />
-      
-      <Link href="/" className="absolute top-8 left-8 text-neutral-400 hover:text-white transition-colors">
-        &larr; Back to Scene
+    <div className="relative w-screen h-screen bg-black overflow-hidden">
+      <Image
+        src={rat.imagePath}
+        alt={rat.name}
+        fill
+        className="object-contain"
+        priority
+      />
+
+      {/* Back button */}
+      <Link
+        href="/"
+        className="absolute top-6 left-6 z-10 text-white/60 hover:text-white transition-colors text-sm"
+      >
+        &larr; Back
       </Link>
-      
-      <div className="max-w-4xl w-full grid md:grid-cols-2 gap-8 items-center">
-        <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden shadow-2xl border border-neutral-800">
-           <Image
-            src={ratImage}
-            alt={rat.name}
-            fill
-            className="object-cover"
-            priority
-          />
-        </div>
-        
-        <div className="space-y-6">
-          <h1 className="text-5xl font-serif font-bold tracking-tight text-amber-500">
-            {rat.name}
-          </h1>
-          <p className="text-xl text-neutral-300 leading-relaxed font-light">
-            {rat.description}
-          </p>
-        </div>
+
+      {/* Name + description overlay at the bottom */}
+      <div className="absolute bottom-0 left-0 right-0 z-10 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-8 py-10">
+        <h1 className="text-4xl font-serif font-bold text-amber-400 mb-2">{rat.name}</h1>
+        <p className="text-neutral-300 text-lg font-light max-w-2xl">{rat.description}</p>
       </div>
     </div>
   );
