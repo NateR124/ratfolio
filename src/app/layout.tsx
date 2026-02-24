@@ -30,7 +30,14 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
-        <AudioPlayer src="/audio/rat-club.wav" />
+        {/* Audio player — anchored to bottom-right of the scene frame */}
+        <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
+          <div className="mx-auto w-full max-w-[1920px] max-h-[1080px] aspect-video relative">
+            <div className="absolute bottom-6 right-6 pointer-events-auto">
+              <AudioPlayer src="/audio/rat-club.wav" />
+            </div>
+          </div>
+        </div>
 
         {/* Mobile notice */}
         <div className="fixed inset-0 z-40 bg-black md:hidden pointer-events-none">

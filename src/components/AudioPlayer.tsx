@@ -42,7 +42,7 @@ export default function AudioPlayer({ src }: AudioPlayerProps) {
   if (unavailable) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div>
       <audio ref={audioRef} src={src} loop onError={() => setUnavailable(true)} />
       <div className="flex items-center bg-black/60 backdrop-blur-md border border-white/20 rounded-full shadow-lg overflow-hidden">
 
