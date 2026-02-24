@@ -41,13 +41,13 @@ export const rats: Rat[] = [
     hoverScene: '/images/rat_main_menu_frankie.png',
   },
   {
-    id: 'cassius',
-    name: 'Count Cassius de Camembert',
+    id: 'barnaby',
+    name: 'Sir Barnaby "the Curd" Stilton',
     description: 'The Silver-Tongued Strategist. He has never raised his voice. He has never needed to.',
     x1: 46, y1: 27.3, x2: 71, y2: 51.5,
     audioPath: '/audio/rat-5.mp3',
     imagePath: '/images/rats_rogue1.png',
-    hoverScene: '/images/rat_main_menu_cassius.png',
+    hoverScene: '/images/rat_main_menu_barnaby.png',
   },
   {
     id: 'percival',

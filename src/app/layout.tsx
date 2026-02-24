@@ -39,7 +39,7 @@ export default function RootLayout({
                 { ratId: 'poker-crew',                path: '/audio/rat-club-poker.wav' },
                 { ratId: 'thaddeus',                  path: '/audio/rat-club-thaddeus.wav' },
                 { ratId: 'frankie',                   path: '/audio/rat-club-frankie.wav' },
-                { ratId: ['cassius', 'percival'],      path: '/audio/rat-club-rogue.wav' },
+                { ratId: ['barnaby', 'percival'],      path: '/audio/rat-club-rogue.wav' },
                 { ratId: 'bubbles',                   path: '/audio/rat-club-bubbles.wav' },
               ]} />
             </div>
