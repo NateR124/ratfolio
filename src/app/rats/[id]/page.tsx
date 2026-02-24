@@ -1,7 +1,7 @@
 import { rats } from '@/lib/rats';
-import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
+import BackNav from '@/components/BackNav';
 
 export function generateStaticParams() {
   return rats.map((rat) => ({
@@ -27,13 +27,7 @@ export default async function RatPage({ params }: { params: Promise<{ id: string
         priority
       />
 
-      {/* Back button */}
-      <Link
-        href="/"
-        className="absolute top-6 left-6 z-10 text-white/60 hover:text-white transition-colors text-sm"
-      >
-        &larr; Back
-      </Link>
+      <BackNav />
 
       {/* Name + description overlay at the bottom */}
       <div className="absolute bottom-0 left-0 right-0 z-10 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-8 py-10">
