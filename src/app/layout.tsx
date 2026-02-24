@@ -18,8 +18,8 @@ export const metadata: Metadata = {
   title: "Ratfolio",
   description: "A gallery of distinguished rats.",
   metadataBase: new URL(
-    process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
+    process.env.NODE_ENV === 'production'
+      ? 'https://ratfolio.vercel.app'
       : 'http://localhost:3000'
   ),
   openGraph: {
