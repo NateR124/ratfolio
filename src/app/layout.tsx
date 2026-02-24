@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Image from "next/image";
 import AudioPlayer from "@/components/AudioPlayer";
 
 const geistSans = Geist({
@@ -30,6 +31,11 @@ export default function RootLayout({
       >
         {children}
         <AudioPlayer src="/audio/rat-club.wav" />
+
+        {/* Mobile notice */}
+        <div className="fixed inset-0 z-40 bg-black md:hidden pointer-events-none">
+          <Image src="/images/rat_mobile.png" alt="Best viewed on desktop" fill className="object-cover" />
+        </div>
       </body>
     </html>
   );
