@@ -34,7 +34,14 @@ export default function RootLayout({
         <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
           <div className="mx-auto w-full max-w-[1920px] h-full md:h-auto md:max-h-[1080px] md:aspect-video relative">
             <div className="absolute bottom-6 right-6 pointer-events-auto">
-              <AudioPlayer src="/audio/rat-club.wav" />
+              <AudioPlayer stems={[
+                { ratId: null,                        path: '/audio/rat-club.wav' },
+                { ratId: 'poker-crew',                path: '/audio/rat-club-poker.wav' },
+                { ratId: 'thaddeus',                  path: '/audio/rat-club-thaddeus.wav' },
+                { ratId: 'frankie',                   path: '/audio/rat-club-frankie.wav' },
+                { ratId: ['cassius', 'percival'],      path: '/audio/rat-club-rogue.wav' },
+                { ratId: 'bubbles',                   path: '/audio/rat-club-bubbles.wav' },
+              ]} />
             </div>
           </div>
         </div>
