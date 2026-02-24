@@ -165,28 +165,36 @@ export default function AudioPlayer({ stems }: Props) {
         </div>
 
         {/* Play/Pause/Loading button */}
-        <button
-          onClick={toggle}
-          disabled={loading}
-          className="w-12 h-12 flex-shrink-0 text-white flex items-center justify-center hover:bg-white/10 transition-colors disabled:opacity-50"
-          title={playing ? 'Pause music' : 'Play music'}
-        >
-          {loading ? (
-            <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-            </svg>
-          ) : playing ? (
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-              <rect x="6" y="4" width="4" height="16" rx="1" />
-              <rect x="14" y="4" width="4" height="16" rx="1" />
-            </svg>
-          ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 translate-x-0.5" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M5 3l14 9-14 9V3z" />
-            </svg>
-          )}
-        </button>
+        <div className="relative flex items-center justify-center">
+          {/* Pulse ring — visible only when idle (not playing, not loading) */}
+          <div className={`absolute inset-0 rounded-full border-2 border-amber-400/60 transition-opacity duration-500 pointer-events-none ${
+            !playing && !loading ? 'animate-pulse opacity-100' : 'opacity-0'
+          }`} />
+          <button
+            onClick={toggle}
+            disabled={loading}
+            className={`flex-shrink-0 text-white flex items-center justify-center hover:bg-white/10 transition-all duration-300 disabled:opacity-50 ${
+              !playing && !loading ? 'w-16 h-16' : 'w-12 h-12'
+            }`}
+            title={playing ? 'Pause music' : 'Play music'}
+          >
+            {loading ? (
+              <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+              </svg>
+            ) : playing ? (
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="6" y="4" width="4" height="16" rx="1" />
+                <rect x="14" y="4" width="4" height="16" rx="1" />
+              </svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 translate-x-0.5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M5 3l14 9-14 9V3z" />
+              </svg>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );

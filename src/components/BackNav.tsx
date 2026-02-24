@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { SHOW_TEXT } from '@/lib/theme';
 
 export default function BackNav() {
   const [hovered, setHovered] = useState(false);
@@ -73,9 +74,11 @@ export default function BackNav() {
           transform: `translateX(${(1 - t) * -28}px)`,
         }}
       >
-        <span className="text-amber-400 text-6xl tracking-widest uppercase font-serif font-bold">
-          Back
-        </span>
+        {SHOW_TEXT && (
+          <span className="text-amber-400 text-6xl tracking-widest uppercase font-serif font-bold">
+            Back
+          </span>
+        )}
       </div>
     </Link>
   );
