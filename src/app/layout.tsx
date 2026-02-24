@@ -17,6 +17,20 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Ratfolio",
   description: "A gallery of distinguished rats.",
+  metadataBase: new URL(
+    process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : 'http://localhost:3000'
+  ),
+  openGraph: {
+    title: "Ratfolio",
+    description: "A gallery of distinguished rats.",
+    images: [{ url: '/images/rat_main_menu.png', width: 1920, height: 1080 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    images: ['/images/rat_main_menu.png'],
+  },
 };
 
 export default function RootLayout({
