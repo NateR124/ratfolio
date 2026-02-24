@@ -1,28 +1,57 @@
 'use client';
 
-import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { Rat } from '@/lib/rats';
 import Image from 'next/image';
 import { useState, useRef } from 'react';
+
+
 
 interface RatSceneProps {
   rats: Rat[];
 }
 
+type Corner = { x: number; y: number };
+
 export default function RatScene({ rats }: RatSceneProps) {
+  const router = useRouter();
   const [hoveredRat, setHoveredRat] = useState<string | null>(null);
   const [coordPicker, setCoordPicker] = useState(false);
-  const [pickedCoord, setPickedCoord] = useState<{ x: number; y: number } | null>(null);
+  const [corner1, setCorner1] = useState<Corner | null>(null);
+  const [corner2, setCorner2] = useState<Corner | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleSceneClick = (e: React.MouseEvent) => {
-    if (!coordPicker || !containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    setPickedCoord({ x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10 });
+  const getPercent = (e: React.MouseEvent): Corner => {
+    const rect = containerRef.current!.getBoundingClientRect();
+    return {
+      x: Math.round(((e.clientX - rect.left) / rect.width) * 1000) / 10,
+      y: Math.round(((e.clientY - rect.top) / rect.height) * 1000) / 10,
+    };
   };
+
+  const handleSceneClick = (e: React.MouseEvent) => {
+    if (!coordPicker) return;
+    const pt = getPercent(e);
+    if (!corner1) {
+      setCorner1(pt);
+      setCorner2(null);
+    } else {
+      setCorner2(pt);
+    }
+  };
+
+  const resetPicker = () => {
+    setCorner1(null);
+    setCorner2(null);
+  };
+
+  // Preview rect while picking second corner
+  const previewRect = corner1 && corner2 ? {
+    left: Math.min(corner1.x, corner2.x),
+    top: Math.min(corner1.y, corner2.y),
+    right: Math.max(corner1.x, corner2.x),
+    bottom: Math.max(corner1.y, corner2.y),
+  } : null;
 
   return (
     <div className="relative w-full h-screen overflow-hidden bg-black flex items-center justify-center">
@@ -32,15 +61,9 @@ export default function RatScene({ rats }: RatSceneProps) {
         onClick={handleSceneClick}
       >
         {/* Base scene */}
-        <Image
-          src="/images/rat_main_menu.png"
-          alt="Scene"
-          fill
-          className="object-cover"
-          priority
-        />
+        <Image src="/images/rat_main_menu.png" alt="Scene" fill className="object-cover" priority />
 
-        {/* Hover variants — stacked on top, crossfade in on hover */}
+        {/* Hover variants */}
         {rats.map((rat) => (
           <Image
             key={rat.id}
@@ -51,62 +74,87 @@ export default function RatScene({ rats }: RatSceneProps) {
           />
         ))}
 
-        {/* Hotspots */}
+        {/* Clickable regions */}
         {rats.map((rat) => (
-          <Link
+          <div
             key={rat.id}
-            href={`/rats/${rat.id}`}
-            className={`absolute transform -translate-x-1/2 -translate-y-1/2 group ${coordPicker ? 'pointer-events-none' : ''}`}
-            style={{ left: `${rat.x}%`, top: `${rat.y}%` }}
+            className={`absolute z-10 ${coordPicker ? 'pointer-events-none' : 'cursor-pointer'}`}
+            style={{
+              left: `${rat.x1}%`,
+              top: `${rat.y1}%`,
+              width: `${rat.x2 - rat.x1}%`,
+              height: `${rat.y2 - rat.y1}%`,
+            }}
             onMouseEnter={() => setHoveredRat(rat.id)}
             onMouseLeave={() => setHoveredRat(null)}
-          >
-            <motion.div
-              className="relative w-16 h-16 cursor-pointer"
-              whileHover={{ scale: 1.2 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-3 h-3 rounded-full bg-amber-400/80 shadow-[0_0_8px_rgba(251,191,36,0.8)] animate-pulse" />
-              </div>
-              <div className="w-full h-full rounded-full bg-amber-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-[0_0_20px_rgba(251,191,36,0.4)] border border-amber-400/40" />
-              {hoveredRat === rat.id && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-1 bg-black/80 text-white text-sm rounded whitespace-nowrap border border-white/20 pointer-events-none z-10"
-                >
-                  {rat.name}
-                </motion.div>
-              )}
-            </motion.div>
-          </Link>
+            onClick={(e) => { e.stopPropagation(); router.push(`/rats/${rat.id}`); }}
+          />
         ))}
 
-        {/* Coord picker readout */}
-        {coordPicker && pickedCoord && (
+        {/* Coord picker: corner 1 marker */}
+        {coordPicker && corner1 && (
           <div
-            className="absolute z-20 -translate-x-1/2 -translate-y-full pointer-events-none"
-            style={{ left: `${pickedCoord.x}%`, top: `${pickedCoord.y}%` }}
-          >
-            <div className="bg-black/90 border border-amber-400/60 text-amber-300 text-xs font-mono px-2 py-1 rounded mb-1 whitespace-nowrap">
-              x: {pickedCoord.x} &nbsp; y: {pickedCoord.y}
+            className="absolute w-2 h-2 bg-amber-400 rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+            style={{ left: `${corner1.x}%`, top: `${corner1.y}%` }}
+          />
+        )}
+
+        {/* Coord picker: completed rectangle */}
+        {coordPicker && previewRect && (
+          <>
+            <div
+              className="absolute border-2 border-amber-400/80 bg-amber-400/10 pointer-events-none"
+              style={{
+                left: `${previewRect.left}%`,
+                top: `${previewRect.top}%`,
+                width: `${previewRect.right - previewRect.left}%`,
+                height: `${previewRect.bottom - previewRect.top}%`,
+              }}
+            />
+            <div
+              className="absolute pointer-events-none -translate-x-1/2"
+              style={{ left: `${(previewRect.left + previewRect.right) / 2}%`, top: `${previewRect.bottom}%` }}
+            >
+              <div className="mt-1 bg-black/90 border border-amber-400/60 text-amber-300 text-xs font-mono px-2 py-1 rounded whitespace-nowrap">
+                x1: {Math.min(corner1!.x, corner2!.x)} &nbsp; y1: {Math.min(corner1!.y, corner2!.y)} &nbsp; x2: {Math.max(corner1!.x, corner2!.x)} &nbsp; y2: {Math.max(corner1!.y, corner2!.y)}
+              </div>
             </div>
-            <div className="w-2 h-2 rounded-full bg-amber-400 mx-auto" />
+          </>
+        )}
+
+        {/* Coord picker: waiting for first click */}
+        {coordPicker && !corner1 && (
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-xs text-amber-300/70 font-mono pointer-events-none">
+            click top-left corner
+          </div>
+        )}
+        {coordPicker && corner1 && !corner2 && (
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-xs text-amber-300/70 font-mono pointer-events-none">
+            click bottom-right corner
           </div>
         )}
 
         {/* Coord picker toggle */}
-        <button
-          onClick={(e) => { e.stopPropagation(); setCoordPicker(!coordPicker); setPickedCoord(null); }}
-          className={`absolute top-3 right-3 z-20 text-xs px-3 py-1 rounded-full border transition-all ${
-            coordPicker
-              ? 'bg-amber-400/20 border-amber-400/60 text-amber-300'
-              : 'bg-black/40 border-white/20 text-white/50 hover:text-white/80'
-          }`}
-        >
-          {coordPicker ? 'Picking...' : 'Pick Coords'}
-        </button>
+        <div className="absolute top-3 right-3 z-20 flex gap-2">
+          {coordPicker && (corner1 || corner2) && (
+            <button
+              onClick={(e) => { e.stopPropagation(); resetPicker(); }}
+              className="text-xs px-3 py-1 rounded-full border bg-black/40 border-white/20 text-white/50 hover:text-white/80 transition-all"
+            >
+              Reset
+            </button>
+          )}
+          <button
+            onClick={(e) => { e.stopPropagation(); setCoordPicker(!coordPicker); resetPicker(); }}
+            className={`text-xs px-3 py-1 rounded-full border transition-all ${
+              coordPicker
+                ? 'bg-amber-400/20 border-amber-400/60 text-amber-300'
+                : 'bg-black/40 border-white/20 text-white/50 hover:text-white/80'
+            }`}
+          >
+            {coordPicker ? 'Picking...' : 'Pick Coords'}
+          </button>
+        </div>
       </div>
     </div>
   );
