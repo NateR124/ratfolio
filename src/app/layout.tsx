@@ -29,7 +29,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
-        <AudioPlayer src="/audio/Rat%20Club.wav" />
+        <AudioPlayer src="/audio/rat-club.wav" />
       </body>
     </html>
   );
