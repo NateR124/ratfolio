@@ -6,7 +6,8 @@
       "Bash(npx next build:*)",
       "Bash(npx next dev --help:*)",
       "Bash(cat /c/Code/ratfolio/src/app/rats/[id]/page.tsx)",
-      "Bash(npm run dev)"
+      "Bash(npm run dev)",
+      "Bash(git checkout -b feature-inventory)"
     ]
   }
 }
