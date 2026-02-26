@@ -4,6 +4,7 @@ import "./globals.css";
 import Image from "next/image";
 import SceneGate from "@/components/SceneGate";
 import AudioOverlay from "@/components/AudioOverlay";
+import ItemMenu from "@/components/ItemMenu";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,6 +47,9 @@ export default function RootLayout({
       >
         <SceneGate>
           {children}
+
+          {/* TODO: re-enable when inventory items are ready */}
+          {/* <ItemMenu /> */}
 
           <AudioOverlay stems={[
             { ratId: null,                        path: '/audio/rat-club.wav' },
