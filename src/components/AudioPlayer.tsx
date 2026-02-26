@@ -14,6 +14,9 @@ interface Props {
   gateMode?: boolean;
 }
 
+// Slider goes 0–1 but actual gain is scaled down so max isn't ear-splitting
+const VOLUME_SCALE = 0.12;
+
 export default function AudioPlayer({ stems, gateMode }: Props) {
   const { unlock } = useGate();
   const ctxRef = useRef<AudioContext | null>(null);
@@ -53,7 +56,7 @@ export default function AudioPlayer({ stems, gateMode }: Props) {
     gains.forEach((g, i) => {
       g.gain.cancelScheduledValues(now);
       g.gain.setValueAtTime(g.gain.value, now);
-      g.gain.linearRampToValueAtTime(i === to ? volRef.current : 0, now + dur);
+      g.gain.linearRampToValueAtTime(i === to ? volRef.current * VOLUME_SCALE : 0, now + dur);
     });
     activeRef.current = to;
   };
@@ -71,7 +74,7 @@ export default function AudioPlayer({ stems, gateMode }: Props) {
     const ctx = ctxRef.current;
     const gains = gainsRef.current;
     if (ctx && gains.length) {
-      gains[activeRef.current]?.gain.setTargetAtTime(v, ctx.currentTime, 0.05);
+      gains[activeRef.current]?.gain.setTargetAtTime(v * VOLUME_SCALE, ctx.currentTime, 0.05);
     }
   };
 
@@ -121,7 +124,7 @@ export default function AudioPlayer({ stems, gateMode }: Props) {
     // Now that availableRef is populated, resolve the correct starting stem
     const idx = resolve(pathname);
     activeRef.current = idx;
-    gains[idx]?.gain.setValueAtTime(volRef.current, ctx.currentTime);
+    gains[idx]?.gain.setValueAtTime(volRef.current * VOLUME_SCALE, ctx.currentTime);
 
     setLoading(false);
     setPlaying(true);
