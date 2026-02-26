@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { SHOW_TEXT } from '@/lib/theme';
 
+const arrowCursor = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='32' viewBox='0 0 36 24'%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg stroke='black' stroke-width='9'%3E%3Cpath d='M33 12H5'/%3E%3Cpath d='M12 19l-7-7 7-7'/%3E%3C/g%3E%3Cg stroke='white' stroke-width='6'%3E%3Cpath d='M33 12H5'/%3E%3Cpath d='M12 19l-7-7 7-7'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") 5 16, pointer`;
+
 export default function BackNav() {
   const [hovered, setHovered] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -50,7 +52,8 @@ export default function BackNav() {
     <Link
       href="/"
       ref={linkRef}
-      className="absolute inset-y-0 left-0 w-2/5 z-10"
+      className="absolute inset-y-0 left-0 w-1/5 z-10"
+      style={{ cursor: arrowCursor }}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
     >
@@ -58,7 +61,7 @@ export default function BackNav() {
       <div
         className="absolute inset-y-0 left-0 pointer-events-none"
         style={{
-          width: '62.5%', // 62.5% of 40% zone = 25% of screen
+          width: '100%', // 100% of 20% zone = 20% of screen
           opacity: hovered ? 1 : 0,
           transition: 'opacity 0.5s ease',
           background: 'linear-gradient(to right, rgba(255,255,255,0.38) 0%, transparent 100%)',
