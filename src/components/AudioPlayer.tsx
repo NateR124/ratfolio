@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { useGate } from './SceneGate';
 
 export interface Stem {
   ratId: string | string[] | null; // null = base/default; array = shared stem
@@ -10,9 +11,11 @@ export interface Stem {
 
 interface Props {
   stems: Stem[];
+  gateMode?: boolean;
 }
 
-export default function AudioPlayer({ stems }: Props) {
+export default function AudioPlayer({ stems, gateMode }: Props) {
+  const { unlock } = useGate();
   const ctxRef = useRef<AudioContext | null>(null);
   const gainsRef = useRef<GainNode[]>([]);
   const activeRef = useRef(0);
@@ -123,6 +126,7 @@ export default function AudioPlayer({ stems }: Props) {
     setLoading(false);
     setPlaying(true);
     setExpanded(true);
+    unlock();
   };
 
   const toggle = async () => {
@@ -135,6 +139,7 @@ export default function AudioPlayer({ stems }: Props) {
       await ctx.resume();
       setPlaying(true);
       setExpanded(true);
+      unlock();
     } else {
       await start();
     }
@@ -142,7 +147,63 @@ export default function AudioPlayer({ stems }: Props) {
 
   useEffect(() => () => { ctxRef.current?.close(); }, []);
 
+  // If audio is unavailable, auto-unlock so user isn't stuck on the gate
+  useEffect(() => {
+    if (unavailable) unlock();
+  }, [unavailable, unlock]);
+
   if (unavailable) return null;
+
+  if (gateMode) {
+    return (
+      <div className="flex flex-col items-center gap-6">
+        {/* Big play button */}
+        <div className="relative">
+          <div
+            className={`absolute -inset-3 rounded-full border-2 border-amber-400/60 transition-opacity duration-500 pointer-events-none ${
+              !playing && !loading ? 'animate-pulse opacity-100' : 'opacity-0'
+            }`}
+          />
+          <button
+            onClick={toggle}
+            disabled={loading}
+            className="w-20 h-20 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-white/10 transition-all duration-300 disabled:opacity-50"
+            title={playing ? 'Pause music' : 'Play music'}
+          >
+            {loading ? (
+              <svg className="w-6 h-6 animate-spin" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+              </svg>
+            ) : playing ? (
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="6" y="4" width="4" height="16" rx="1" />
+                <rect x="14" y="4" width="4" height="16" rx="1" />
+              </svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 translate-x-0.5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M5 3l14 9-14 9V3z" />
+              </svg>
+            )}
+          </button>
+        </div>
+
+        {/* Volume slider */}
+        <div className="flex items-center gap-3 bg-black/60 backdrop-blur-md rounded-full px-4 py-2.5 border border-white/20">
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-white/50 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 001.5 12c0 .898.121 1.768.348 2.595.342 1.241 1.519 1.905 2.66 1.905H6.44l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06z" />
+            <path d="M18.584 5.106a.75.75 0 011.06 0c3.808 3.807 3.808 9.98 0 13.788a.75.75 0 11-1.06-1.06 8.25 8.25 0 000-11.668.75.75 0 010-1.06z" />
+            <path d="M15.932 7.757a.75.75 0 011.061 0 6 6 0 010 8.486.75.75 0 01-1.06-1.061 4.5 4.5 0 000-6.364.75.75 0 010-1.06z" />
+          </svg>
+          <input
+            type="range" min="0" max="1" step="0.05"
+            value={volume} onChange={handleVolume}
+            className="w-28 accent-amber-400 cursor-pointer"
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>

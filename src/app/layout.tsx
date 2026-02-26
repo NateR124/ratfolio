@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Image from "next/image";
-import AudioPlayer from "@/components/AudioPlayer";
+import SceneGate from "@/components/SceneGate";
+import AudioOverlay from "@/components/AudioOverlay";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,27 +44,23 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
-        {/* Audio player — anchored to bottom-right of the scene frame */}
-        <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
-          <div className="h-full w-full md:w-auto md:max-w-full md:max-h-[1080px] md:aspect-video relative">
-            <div className="absolute bottom-6 right-6 pointer-events-auto">
-              <AudioPlayer stems={[
-                { ratId: null,                        path: '/audio/rat-club.wav' },
-                { ratId: 'poker-crew',                path: '/audio/rat-club-poker.wav' },
-                { ratId: 'thaddeus',                  path: '/audio/rat-club-thaddeus.wav' },
-                { ratId: 'frankie',                   path: '/audio/rat-club-frankie.wav' },
-                { ratId: ['barnaby', 'percival'],      path: '/audio/rat-club-rogue.wav' },
-                { ratId: 'bubbles',                   path: '/audio/rat-club-bubbles.wav' },
-              ]} />
-            </div>
-          </div>
-        </div>
+        <SceneGate>
+          {children}
 
-        {/* Mobile notice */}
-        <div className="fixed inset-0 z-40 bg-black md:hidden pointer-events-none">
-          <Image src="/images/rat_mobile.png" alt="Best viewed on desktop" fill className="object-cover" />
-        </div>
+          <AudioOverlay stems={[
+            { ratId: null,                        path: '/audio/rat-club.wav' },
+            { ratId: 'poker-crew',                path: '/audio/rat-club-poker.wav' },
+            { ratId: 'thaddeus',                  path: '/audio/rat-club-thaddeus.wav' },
+            { ratId: 'frankie',                   path: '/audio/rat-club-frankie.wav' },
+            { ratId: ['barnaby', 'percival'],      path: '/audio/rat-club-rogue.wav' },
+            { ratId: 'bubbles',                   path: '/audio/rat-club-bubbles.wav' },
+          ]} />
+
+          {/* Mobile notice */}
+          <div className="fixed inset-0 z-40 bg-black md:hidden pointer-events-none">
+            <Image src="/images/rat_mobile.png" alt="Best viewed on desktop" fill className="object-cover" />
+          </div>
+        </SceneGate>
       </body>
     </html>
   );
