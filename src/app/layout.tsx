@@ -46,7 +46,7 @@ export default function RootLayout({
         {children}
         {/* Audio player — anchored to bottom-right of the scene frame */}
         <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
-          <div className="mx-auto w-full max-w-[1920px] h-full md:h-auto md:max-h-[1080px] md:aspect-video relative">
+          <div className="h-full w-full md:w-auto md:max-w-full md:max-h-[1080px] md:aspect-video relative">
             <div className="absolute bottom-6 right-6 pointer-events-auto">
               <AudioPlayer stems={[
                 { ratId: null,                        path: '/audio/rat-club.wav' },
