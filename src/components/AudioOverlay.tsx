@@ -1,5 +1,6 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import { useGate } from './SceneGate';
 import AudioPlayer from './AudioPlayer';
 import type { Stem } from './AudioPlayer';
@@ -34,13 +35,15 @@ export default function AudioOverlay({ stems }: Props) {
               : undefined
           }
         >
-          <div
+          <motion.div
+            layout
+            transition={{ type: 'spring', stiffness: 180, damping: 28 }}
             className={`pointer-events-auto ${
               unlocked ? 'absolute bottom-6 right-6' : ''
             }`}
           >
             <AudioPlayer stems={stems} gateMode={!unlocked} />
-          </div>
+          </motion.div>
         </div>
       </div>
     </>
