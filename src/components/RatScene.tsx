@@ -18,7 +18,8 @@ export default function RatScene({ rats }: RatSceneProps) {
   return (
     <div className="relative w-full h-screen overflow-hidden bg-black flex items-center justify-center">
       <div
-        className="relative w-full h-full max-w-[1920px] max-h-[1080px] aspect-video bg-neutral-900"
+        className="relative aspect-video bg-neutral-900"
+        style={{ width: 'min(100%, calc(100vh * 16 / 9))', maxWidth: '1920px' }}
       >
         {/* Base scene */}
         <Image src="/images/rat_main_menu.png" alt="Scene" fill className="object-cover" priority />
