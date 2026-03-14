@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { Rat } from '@/lib/rats';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 
 
@@ -14,6 +14,19 @@ interface RatSceneProps {
 export default function RatScene({ rats }: RatSceneProps) {
   const router = useRouter();
   const [hoveredRat, setHoveredRat] = useState<string | null>(null);
+  const [baseLoaded, setBaseLoaded] = useState(false);
+
+  // Tier 3: preload detail page images in the background after hover variants mount
+  useEffect(() => {
+    if (!baseLoaded) return;
+    const timer = setTimeout(() => {
+      rats.forEach((rat) => {
+        const img = new window.Image();
+        img.src = rat.imagePath;
+      });
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [baseLoaded, rats]);
 
   return (
     <div className="relative w-full h-screen overflow-hidden bg-black flex items-center justify-center">
@@ -21,11 +34,18 @@ export default function RatScene({ rats }: RatSceneProps) {
         className="relative aspect-video bg-neutral-900"
         style={{ width: 'min(100%, calc(100vh * 16 / 9))', maxWidth: '1920px' }}
       >
-        {/* Base scene */}
-        <Image src="/images/rat_main_menu.png" alt="Scene" fill className="object-cover" priority />
+        {/* Tier 1: base scene — loads first, gates everything else */}
+        <Image
+          src="/images/rat_main_menu.png"
+          alt="Scene"
+          fill
+          className="object-cover"
+          priority
+          onLoad={() => setBaseLoaded(true)}
+        />
 
-        {/* Hover variants */}
-        {rats.map((rat) => (
+        {/* Tier 2: hover variants — only mount after base image is ready */}
+        {baseLoaded && rats.map((rat) => (
           <Image
             key={rat.id}
             src={rat.hoverScene}
