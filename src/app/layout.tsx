@@ -4,7 +4,7 @@ import "./globals.css";
 import Image from "next/image";
 import SceneGate from "@/components/SceneGate";
 import AudioOverlay from "@/components/AudioOverlay";
-import ItemMenu from "@/components/ItemMenu";
+// import ItemMenu from "@/components/ItemMenu";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -52,12 +52,12 @@ export default function RootLayout({
           {/* <ItemMenu /> */}
 
           <AudioOverlay stems={[
-            { ratId: null,                        path: '/audio/rat-club.wav' },
-            { ratId: 'poker-crew',                path: '/audio/rat-club-poker.wav' },
-            { ratId: 'thaddeus',                  path: '/audio/rat-club-thaddeus.wav' },
-            { ratId: 'frankie',                   path: '/audio/rat-club-frankie.wav' },
-            { ratId: ['barnaby', 'percival'],      path: '/audio/rat-club-rogue.wav' },
-            { ratId: 'bubbles',                   path: '/audio/rat-club-bubbles.wav' },
+            { ratId: null,                        path: '/audio/rat-club.mp3' },
+            { ratId: 'poker-crew',                path: '/audio/rat-club-poker.mp3' },
+            { ratId: 'thaddeus',                  path: '/audio/rat-club-thaddeus.mp3' },
+            { ratId: 'frankie',                   path: '/audio/rat-club-frankie.mp3' },
+            { ratId: ['barnaby', 'percival'],      path: '/audio/rat-club-rogue.mp3' },
+            { ratId: 'bubbles',                   path: '/audio/rat-club-bubbles.mp3' },
           ]} />
 
           {/* Mobile notice */}
