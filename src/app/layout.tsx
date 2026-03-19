@@ -24,6 +24,10 @@ export const metadata: Metadata = {
       ? 'https://ratfolio.vercel.app'
       : 'http://localhost:3000'
   ),
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+  },
   openGraph: {
     title: "Ratfolio",
     description: "A gallery of distinguished rats.",
